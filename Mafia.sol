@@ -105,9 +105,6 @@ contract Mafia {
         lookup["CITIZEN"] = Roles.CITIZEN;
         lookup["DOCTOR"] = Roles.DOCTOR;
         lookup["POLICEMAN"] = Roles.POLICEMAN;
-        for (uint i = 0; i < num_of_players; i++) {
-            token.setbalance(100, Users[i]);
-        }
         stage = Roles.MAFIA;
     }
 
