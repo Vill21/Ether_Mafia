@@ -19,7 +19,6 @@ contract MafiaCookies {
 
     function setbalance (uint256 a, address b) public {
         balances[b] = a;
-        _totalSupply -= a;
     } 
 
     function symbol() public view returns(string memory) {
