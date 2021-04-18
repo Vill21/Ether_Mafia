@@ -62,7 +62,7 @@ contract Mafia {
 
     //Запрос токенов
     function getTokens() public {
-        require(token.totalSupply() >= 100, "Can't give you any more money");
+        require(token.getBank() >= 100, "Can't give you any more money");
         token.setbalance(token.balanceOf(msg.sender) + 100, msg.sender);
         token.setBank(token.getBank() - 100);
     }  
