@@ -10,7 +10,8 @@ contract MafiaCookies {
     string private constant _name = "MafiaCookies"; // имя токена
     string private constant _symbol = "MC"; // символ (сокращенное название) токена
     uint256 private constant _decimals = 18; // максимальное количество дробных цифр после запятой
-    uint256 private _totalSupply = 10000; // общее количество токенов в блокчейне
+    uint256 private constant _totalSupply = 10000; // общее количество токенов в блокчейне
+    uint256 private bank = _totalSupply; // банк и токены в обороте
 
     mapping(address => uint256) public balances; // балансы всех игроков
     mapping(address => mapping(address => uint256)) allowed; // соответствие: адрес -> адрес, который может снять с него токены, -> количество этих токенов
@@ -40,9 +41,14 @@ contract MafiaCookies {
         return _totalSupply;
     }
 
-    //Меняет общее количество токенов в блокчейне
-    function setSupply(uint val) public {
-        _totalSupply = val;
+    //Возвращает доступное число токенов в общем банке
+    function getBank() public returns (uint256) {
+        return bank;
+    }
+    
+    //Меняет число токенов в общем банке
+    function setBank(uint val) public {
+        bank = val;
     }
     
     //Количество токенов, приписанных к определенному адресу
