@@ -12,6 +12,7 @@ contract Mafia {
     // возможные роли и стадии игры
     enum Roles { 
         UNKNOWN,
+        GAMESTART,
         MAFIA, 
         POLICEMAN, 
         DOCTOR, 
@@ -38,6 +39,11 @@ contract Mafia {
     uint private hit = 11; // индекс игрока, в которого попали
     uint private voted = 0; // количество проголосовавших
     uint private index = 0; // индекс для заполнения массива вошедших игроков
+    uint private bank = 0;
+    uint private constant min_stake = 100;
+    uint private constant welcoming_tokens = 100; // приветственные токены
+    uint private mafia_bets = 0; // ставки мафии
+    uint private citizen_bets = 0; // ставки жителей
 
     uint[num_of_players] private voted_already; // проголосовавшие игроки
     uint[num_of_players] private voted_for; // игроки, за которых проголосовали
@@ -60,28 +66,48 @@ contract Mafia {
         address adr;
     }
 
-    //Запрос токенов
-    function getTokens() public {
-        require(token.getBank() >= 100, "Can't give you any more money");
-        token.setbalance(token.balanceOf(msg.sender) + 100, msg.sender);
-        token.setBank(token.getBank() - 100);
-    }  
-
     // вход игрока в игру
     function Ask() 
     public 
     avaliable() 
     {
-        if (token.balanceOf(msg.sender) >= 100) {
-            Users[index] = msg.sender;
-            players_roles[msg.sender] = index;
-            token.setbalance(token.balanceOf(msg.sender) - 100, msg.sender);
-            token.setBank(token.getBank() + 100);
-            index++;
-        }
+        Users[index] = msg.sender;
+        players_roles[msg.sender] = index;
+        index++;
     }
 
-     // начало игры
+    function Bet(uint256 stake)
+    public
+    ActiveGame()
+    {
+        require(stage == Roles.GAMESTART, "Bets are no longer accepted!");
+        require(stake >= min_stake, "Less than min stake"); 
+        require(token.balanceOf(msg.sender) >= stake, "Not enough");
+        bank += stake;
+        uint ind = players_roles[msg.sender];
+        if (players[ind].role == Roles.MAFIA) {
+            mafia_bets += stake;
+        } else {
+            citizen_bets += stake;
+        }
+        token.transfer(address(this), stake);
+    }
+
+    function Mafia_Bets() 
+    public
+    view 
+    returns(uint256) {
+        return mafia_bets;
+    }
+
+    function Citizen_Bets() 
+    public
+    view 
+    returns(uint256) {
+        return citizen_bets;
+    }
+
+    // начало игры
     function gameStart() 
     public 
     full() 
@@ -90,6 +116,7 @@ contract Mafia {
         for (uint i = 0; i < num_of_players; i += 1) {
             players[i].state = States.ALIVE;
             players[i].adr = Users[i];
+            token.transfer(Users[i], welcoming_tokens);
         }
         players[0].role = Roles.MAFIA;
         players[1].role = Roles.MAFIA;
@@ -105,7 +132,10 @@ contract Mafia {
         lookup["CITIZEN"] = Roles.CITIZEN;
         lookup["DOCTOR"] = Roles.DOCTOR;
         lookup["POLICEMAN"] = Roles.POLICEMAN;
-        stage = Roles.MAFIA;
+        stage = Roles.GAMESTART;
+        bank = 0;
+        mafia_bets = 0;
+        citizen_bets = 0;
     }
 
     // ход мафии
@@ -217,9 +247,9 @@ contract Mafia {
     public
     {
        emit Winside(Roles.MAFIA, ":WIN");
+       uint256 count = bank / 3;
        for (uint i = 0; i < 3; i++) {
-           token.setbalance(token.balanceOf(Users[i]) + 200, Users[i]);
-           token.setBank(token.getBank() - 200);
+           token.transfer(Users[i], count);
        }
        Reset();
        return;
@@ -229,9 +259,9 @@ contract Mafia {
     public 
     {
         emit Winside(Roles.CITIZEN, ":WIN");
+        uint256 count = bank / 7;
         for (uint i = 3; i < num_of_players; i++) {
-           token.setbalance(token.balanceOf(Users[i]) + 200, Users[i]);
-           token.setBank(token.getBank() - 200);
+           token.transfer(Users[i], count);
         }
         Reset();
         return;
@@ -374,6 +404,7 @@ contract Mafia {
                 break;
             }    
         }
+        if (stage == Roles.GAMESTART && r == Roles.MAFIA) flag = true;
         require (flag);
         _;
     }
