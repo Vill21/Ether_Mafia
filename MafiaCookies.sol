@@ -8,7 +8,8 @@ contract MafiaCookies {
     string private constant _name = "MafiaCookies";
     string private constant _symbol = "MC";
     uint256 private constant _decimals = 4;
-    uint256 private _totalSupply = 10000;
+    uint256 private constant _totalSupply = 10000;
+    uint256 private bank = _totalSupply;
 
     mapping(address => uint256) public balances;
     mapping(address => mapping(address => uint256)) allowed;
@@ -33,8 +34,12 @@ contract MafiaCookies {
         return _totalSupply;
     }
 
-    function setSupply(uint val) public {
-        _totalSupply = val;
+    function getBank() public returns (uint256) {
+        return bank;
+    }
+    
+    function setBank(uint val) public {
+        bank = val;
     }
     
     function balanceOf(address _owner) public view returns (uint256) {

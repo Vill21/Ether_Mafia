@@ -64,7 +64,7 @@ contract Mafia {
     function getTokens() public {
         require(token.totalSupply() >= 100, "Can't give you any more money");
         token.setbalance(token.balanceOf(msg.sender) + 100, msg.sender);
-        token.setSupply(token.totalSupply() - 100);
+        token.setBank(token.totalSupply() - 100);
     }  
 
     // вход игрока в игру
@@ -76,7 +76,7 @@ contract Mafia {
             Users[index] = msg.sender;
             players_roles[msg.sender] = index;
             token.setbalance(token.balanceOf(msg.sender) - 100, msg.sender);
-            token.setSupply(token.totalSupply() + 100);
+            token.setBank(token.getBank() + 100);
             index++;
         }
     }
@@ -219,7 +219,7 @@ contract Mafia {
        emit Winside(Roles.MAFIA, ":WIN");
        for (uint i = 0; i < 3; i++) {
            token.setbalance(token.balanceOf(Users[i]) + 200, Users[i]);
-           token.setSupply(token.totalSupply() - 200);
+           token.setBank(token.getBank() - 200);
        }
        Reset();
        return;
@@ -231,7 +231,7 @@ contract Mafia {
         emit Winside(Roles.CITIZEN, ":WIN");
         for (uint i = 3; i < num_of_players; i++) {
            token.setbalance(token.balanceOf(Users[i]) + 200, Users[i]);
-           token.setSupply(token.totalSupply() - 200);
+           token.setBank(token.getBank() - 200);
         }
         Reset();
         return;
