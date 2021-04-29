@@ -90,7 +90,7 @@ contract Mafia {
         } else {
             citizen_bets += stake;
         }
-        token.transfer(address(this), stake);
+        token.transferFrom(msg.sender, address(this), stake);
     }
 
     function Mafia_Bets() 
