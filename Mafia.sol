@@ -107,6 +107,10 @@ contract Mafia {
         return citizen_bets;
     }
 
+    function lookBalance(address addr) public view returns (uint) {
+        return token.balanceOf(addr);
+    }
+
     // начало игры
     function gameStart() 
     public 
