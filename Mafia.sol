@@ -1,4 +1,5 @@
 pragma solidity >=0.4.22 <0.9.0;
+pragma experimental ABIEncoderV2;
 
 import "./MafiaCookies.sol";
 
@@ -26,6 +27,15 @@ contract Mafia {
         DEAD
     }
 
+    function getStateP(uint ind) public returns (States) {
+        return players[ind].state;
+    }
+
+    function getState(uint ind) public returns (States) {
+        if (ind == 0) return States.DEAD;
+        else return States.ALIVE;
+    }
+
     event Log(string _mystring);
     event Winside(Roles a, string b);
     event CurrentStage(Roles a);
@@ -51,6 +61,11 @@ contract Mafia {
     Roles[num_of_players] private roles_arr;
 
     Player[num_of_players] private players; // игроки
+
+    function getPlayers() public view returns (Player[num_of_players] memory) {
+        return players;
+    }
+
     Roles private stage = Roles.STOPGAME; // стадия игры
 
     address[num_of_players] private Users; // адреса вошедших игроков
@@ -370,12 +385,6 @@ contract Mafia {
     {
         return "Mafia Project by Antonov, Bagildinskaya, Bogomolov, Grigorieva, Karnaushko";
     }
-
-    /*function buyTokens(uint val) public payable { // покупка токенов за эфиры
-        token.setbalance(msg.value / 10000000000000000, msg.sender);
-        token.setSupply(token.totalSupply() - msg.value / 10000000000000000);
-        this.call.value(val)();
-    }*/
 
     modifier ActiveGame() {
         require(stage != Roles.STOPGAME);
