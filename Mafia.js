@@ -27,48 +27,62 @@ contract('Mafia', (accounts) => {
             await instance.MafiaKill(5);
             await instance.PolicemanFind(5, {from: accounts[8]});
             await instance.DoctorHeal(6, {from: accounts[5]});
-            const check_alive = await instance.getStateP.call(5);
-            const st = await instance.getState.call(0)
+            const check_alive = await instance.getStateP.call(5).toString();
+            const st = await instance.getState.call(0).toString();
             assert.equal(check_alive, st, 'mafia is not able to kill');
             await instance.Reset();
         });
-        /*it('should heal', async () => {
+        it('should heal', async () => {
             const instance = await Mafia.deployed();
-            //await instance.gameStart();
+            for (let i = 0; i < 10; ++i) {
+                await instance.Ask({from: accounts[i]});
+            }
+            await instance.gameStart();
             await instance.MafiaKill(5);
             await instance.PolicemanFind(5, {from: accounts[8]});
             await instance.DoctorHeal(5, {from: accounts[5]});
-            assert.equal(instance.players[5].state, instance.States.ALIVE, 'doctor is not able to heal');
-            //await instance.Reset();
-        });
-        it('should find mafia', async () => {
-            const instance = await Mafia.deployed();
-            await instance.gameStart();
-            await instance.MafiaKill(5);
-            await instance.PolicemanFind(1, {from: accounts[8]});
-            await instance.DoctorHeal(5, {from: accounts[5]});
-            assert.equal(instance.roles_arr[1], instance.Roles.Mafia, 'policeman is not able to find mafia');
+            const check_alive = await instance.getStateP.call(5).toString();
+            const st = await instance.getState.call(1).toString();
+            assert.equal(check_alive, st, 'doctor is not able to heal');
             await instance.Reset();
         });
         it('should find citizen', async () => {
             const instance = await Mafia.deployed();
+            for (let i = 0; i < 10; ++i) {
+                await instance.Ask({from: accounts[i]});
+            }
             await instance.gameStart();
             await instance.MafiaKill(5);
             await instance.PolicemanFind(9, {from: accounts[8]});
             await instance.DoctorHeal(5, {from: accounts[5]});
-            assert.equal(instance.roles_arr[9], instance.Roles.Citizen, 'policeman is not able to find citizen');
+            const check_index = await instance.getRolesArr.call(9).toString();
+            const r = instance.getRole.call(4).toString();
+            assert.equal(check_index, r, 'policeman is not able to find citizen');
             await instance.Reset();
         });
-        /*it('should vote', async () => {
-
-        });*/
+        it('should find mafia', async () => {
+            const instance = await Mafia.deployed();
+            for (let i = 0; i < 10; ++i) {
+                await instance.Ask({from: accounts[i]});
+            }
+            await instance.gameStart();
+            await instance.MafiaKill(5);
+            await instance.PolicemanFind(1, {from: accounts[8]});
+            await instance.DoctorHeal(5, {from: accounts[5]});
+            const check_index = await instance.getRolesArr.call(1).toString();
+            const r = instance.getRole.call(1).toString();
+            assert.equal(check_index, r, 'policeman is not able to find mafia');
+            await instance.Reset();
+        });
     });
 
     describe('Bets', () => {
         it('should take bets', async () => {
             const instance = await Mafia.deployed();
+            for (let i = 0; i < 10; ++i) {
+                await instance.Ask({from: accounts[i]});
+            }
             await instance.gameStart();
-            
             for (let i = 0; i < 10; ++i) {
                 await instance.Bet(100, {from: accounts[i]});
                 let balance = await instance.lookBalance(accounts[i]);
@@ -78,6 +92,9 @@ contract('Mafia', (accounts) => {
         });
         it('should have mafias bets', async () => {
             const instance = await Mafia.deployed();
+            for (let i = 0; i < 10; ++i) {
+                await instance.Ask({from: accounts[i]});
+            }
             await instance.gameStart();
             for (let i = 0; i < 10; ++i) {
                 await instance.Bet(100, {from: accounts[i]});
@@ -87,6 +104,9 @@ contract('Mafia', (accounts) => {
         });
         it('should have citizens bets', async () => {
             const instance = await Mafia.deployed();
+            for (let i = 0; i < 10; ++i) {
+                await instance.Ask({from: accounts[i]});
+            }
             await instance.gameStart();
             for (let i = 0; i < 10; ++i) {
                 await instance.Bet(100, {from: accounts[i]});
@@ -96,9 +116,12 @@ contract('Mafia', (accounts) => {
         });
     });
 
-    /*describe('Prizes', () => {
+    describe('Prizes', () => {
         it('should give prize to mafias if they win', async () => {
             const instance = await Mafia.deployed();
+            for (let i = 0; i < 10; ++i) {
+                await instance.Ask({from: accounts[i]});
+            }
             await instance.gameStart();
             for (let i = 0; i < 10; ++i) {
                 await instance.Bet(100, {from: accounts[i]});
@@ -112,6 +135,9 @@ contract('Mafia', (accounts) => {
         });
         it('should give prize to citizens if they win', async () => {
             const instance = await Mafia.deployed();
+            for (let i = 0; i < 10; ++i) {
+                await instance.Ask({from: accounts[i]});
+            }
             await instance.gameStart();
             for (let i = 0; i < 10; ++i) {
                 await instance.Bet(70, {from: accounts[i]});
@@ -123,5 +149,5 @@ contract('Mafia', (accounts) => {
             }
             await instance.Reset();
         });
-    });*/
+    });
 });
