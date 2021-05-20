@@ -27,13 +27,24 @@ contract Mafia {
         DEAD
     }
 
-    function getStateP(uint ind) public returns (States) {
+    function getStateP(uint ind) public view returns (States) {
         return players[ind].state;
     }
 
-    function getState(uint ind) public returns (States) {
+    function getState(uint ind) public pure returns (States) {
         if (ind == 0) return States.DEAD;
         else return States.ALIVE;
+    }
+
+    function getRoleP(uint ind) public view returns (Roles) {
+        return players[ind].role;
+    }
+
+    function getRole(uint ind) public pure returns (Roles) {
+        if (ind == 1) return Roles.MAFIA;
+        else if (ind == 2) return Roles.POLICEMAN;
+        else if (ind == 3) return Roles.DOCTOR;
+        else return Roles.CITIZEN;
     }
 
     event Log(string _mystring);
@@ -59,6 +70,10 @@ contract Mafia {
     uint[num_of_players] private voted_for; // игроки, за которых проголосовали
 
     Roles[num_of_players] private roles_arr;
+
+    function getRolesArr() public view returns (Roles[num_of_players] memory) {
+        return roles_arr;
+    }
 
     Player[num_of_players] private players; // игроки
 
