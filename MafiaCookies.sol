@@ -20,22 +20,22 @@ contract MafiaCookies {
     }
 
     //Возвращает имя токена
-    function name() public view returns(string memory) {
+    function name() public pure returns(string memory) {
         return _name;
     }
 
     //Возвращает символ токена
-    function symbol() public view returns(string memory) {
+    function symbol() public pure returns(string memory) {
         return _symbol;
     }
 
     //Возвращает максимальное количество дробных цифр после запятой
-    function decimals() public view returns(uint256) {
+    function decimals() public pure returns(uint256) {
         return _decimals;
     }
 
     //Возвращает общее количество токенов в блокчейне
-    function totalSupply() public view returns(uint256) {
+    function totalSupply() public pure returns(uint256) {
         return _totalSupply;
     }
     
