@@ -4,10 +4,14 @@ pragma experimental ABIEncoderV2;
 import "./MafiaCookies.sol";
 
 contract Mafia {
-    MafiaCookies public token;
+    MafiaCookies private token;
 
     constructor() public {
        token = new MafiaCookies();
+    }
+
+    function getToken() public view returns (MafiaCookies) {
+        return token;
     }
 
     // возможные роли и стадии игры
@@ -47,6 +51,10 @@ contract Mafia {
         else return Roles.CITIZEN;
     }
 
+    function getContractAddr() public view returns (address) {
+        return address(this);
+    }
+
     event Log(string _mystring);
     event Winside(Roles a, string b);
     event CurrentStage(Roles a);
@@ -71,14 +79,14 @@ contract Mafia {
 
     Roles[num_of_players] private roles_arr;
 
-    function getRolesArr() public view returns (Roles[num_of_players] memory) {
-        return roles_arr;
+    function getRolesArr(uint ind) public view returns (Roles) {
+        return roles_arr[ind];
     }
 
     Player[num_of_players] private players; // игроки
 
-    function getPlayers() public view returns (Player[num_of_players] memory) {
-        return players;
+    function getPlayers(uint ind) public view returns (Player memory) {
+        return players[ind];
     }
 
     Roles private stage = Roles.STOPGAME; // стадия игры
@@ -139,6 +147,10 @@ contract Mafia {
 
     function lookBalance(address addr) public view returns (uint) {
         return token.balanceOf(addr);
+    }
+
+    function tokApprove(address addr, uint val) public {
+        token.approve(addr, val);
     }
 
     // начало игры
