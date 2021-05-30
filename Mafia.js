@@ -13,11 +13,11 @@ contract('Mafia', (accounts) => {
         });
         after(async () => {
             await instance.Reset();
-        })
+        });
         it('should put 100 MC to each account at start', async () => {
             for (let i = 0; i < 10; ++i) {
                 let balance = await instance.lookBalance(accounts[i]);
-                assert.equal(balance, 100, `100 wasn't in the ${i} account`);
+                assert.equal(balance, '100', `100 wasn't in the ${i} account`);
             }
         });
     });
@@ -70,15 +70,17 @@ contract('Mafia', (accounts) => {
 
     describe('Bets', () => {
         let instance;
+        let mc;
         beforeEach(async () => {
             instance = await Mafia.deployed();
-            for (let i = 0; i < 10; ++i) {
-                await instance.tokApprove(instance.getContractAddress, 100, {from: accounts[i]});
-            }
+            mc = await MC.deployed();
             for (let i = 0; i < 10; ++i) {
                 await instance.Ask({from: accounts[i]});
             }
             await instance.gameStart();
+            for (let i = 0; i < 10; ++i) {
+                await mc.approve(instance.address, 100, {from: accounts[i]});
+            }
         });
         afterEach(async () => {
             await instance.Reset();
@@ -88,6 +90,8 @@ contract('Mafia', (accounts) => {
                 await instance.Bet(100, {from: accounts[i]});
                 let balance = await instance.lookBalance(accounts[i]);
                 assert.equal(balance, 0, 'bets taken unsuccessfully');
+                /*let all = await mc.allowance(accounts[i], instance.address);
+                assert.equal(all, 100, 'err');*/
             }
         });
         it('should have mafias bets', async () => {
